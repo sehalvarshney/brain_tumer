@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Brain Tumor Detection</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(15px);
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        width: 350px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    input[type="file"] {
+        margin: 20px 0;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
+    }
+
+    button {
+        background: #00c6ff;
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        border: none;
+        padding: 12px 20px;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    img {
+        margin-top: 15px;
+        max-width: 100%;
+        border-radius: 10px;
+        display: none;
+    }
+
+    .result {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .confidence {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .loader {
+        display: none;
+        margin-top: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🧠 Brain Tumor Detector</h1>
+    <p>Upload MRI image to detect tumor</p>
+
+    <input type="file" id="fileInput" accept="image/*">
+
+    <button onclick="uploadImage()">Predict</button>
+
+    <img id="preview">
+
+    <div class="loader" id="loader">⏳ Processing...</div>
+
+    <div class="result" id="result"></div>
+    <div class="confidence" id="confidence"></div>
+</div>
+
+<script>
+function uploadImage() {
+    let fileInput = document.getElementById("fileInput");
+    let file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select an image");
+        return;
+    }
+
+    // Preview image
+    let preview = document.getElementById("preview");
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+
+    // Show loader
+    document.getElementById("loader").style.display = "block";
+    document.getElementById("result").innerText = "";
+    document.getElementById("confidence").innerText = "";
+
+    let formData = new FormData();
+    formData.append("file", file);
+
+    fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("loader").style.display = "none";
+
+        if (data.error) {
+            document.getElementById("result").innerText = "Error: " + data.error;
+        } else {
+            document.getElementById("result").innerText =
+                "Prediction: " + data.prediction;
+
+            document.getElementById("confidence").innerText =
+                "Confidence: " + (data.confidence * 100).toFixed(2) + "%";
+        }
+    })
+    .catch(err => {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("result").innerText = "Server error";
+    });
+}
+</script>
+
+</body>
+</html>
