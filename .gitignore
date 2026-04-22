@@ -2,3 +2,4 @@ venv/
 .venv/
 __pycache__/
 *.pyc
+brain_tumor_model.keras
