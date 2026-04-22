@@ -103,7 +103,6 @@
     <div class="result" id="result"></div>
     <div class="confidence" id="confidence"></div>
 </div>
-
 <script>
 function uploadImage() {
     let fileInput = document.getElementById("fileInput");
@@ -114,12 +113,10 @@ function uploadImage() {
         return;
     }
 
-    // Preview image
     let preview = document.getElementById("preview");
     preview.src = URL.createObjectURL(file);
     preview.style.display = "block";
 
-    // Show loader
     document.getElementById("loader").style.display = "block";
     document.getElementById("result").innerText = "";
     document.getElementById("confidence").innerText = "";
@@ -127,7 +124,8 @@ function uploadImage() {
     let formData = new FormData();
     formData.append("file", file);
 
-    fetch("http://127.0.0.1:5000/predict", {
+    // ✅ FIXED HERE
+    fetch("/predict", {
         method: "POST",
         body: formData
     })
