@@ -454,12 +454,12 @@
                 <div class="panel-header">NETWORK SPECIFICATIONS</div>
                 <div class="spec-list">
                     <div class="spec-row">
-                        <span class="spec-key">base_model</span>
-                        <span class="spec-val"><code>MobileNetV2</code></span>
+                        <span class="spec-key">architecture</span>
+                        <span class="spec-val"><code>Custom CNN</code></span>
                     </div>
                     <div class="spec-row">
                         <span class="spec-key">pretrain_weights</span>
-                        <span class="spec-val"><code>ImageNet</code></span>
+                        <span class="spec-val">None — trained from scratch</span>
                     </div>
                     <div class="spec-row">
                         <span class="spec-key">input_shape</span>
@@ -492,26 +492,37 @@
                 <div class="doc-section-line"></div>
             </div>
             <div class="panel">
-                <div class="panel-header">TWO-PHASE TRANSFER LEARNING</div>
+                <div class="panel-header">END-TO-END SUPERVISED TRAINING</div>
                 <div class="phase-list">
                     <div class="phase-item">
                         <div class="phase-num">1</div>
                         <div class="phase-body">
-                            <div class="phase-title">Feature Extraction (Frozen)</div>
+                            <div class="phase-title">Feature Extraction Layers</div>
                             <div class="phase-desc">
-                                MobileNetV2 base layers are frozen. Only the classification head is trained,
-                                allowing the model to leverage ImageNet visual features on the MRI domain.
+                                Stacked convolutional blocks with ReLU activations and max-pooling
+                                learn spatial hierarchies directly from MRI pixel data — no pretrained
+                                weights or external feature representations.
                             </div>
                         </div>
                     </div>
                     <div class="phase-item">
                         <div class="phase-num">2</div>
                         <div class="phase-body">
-                            <div class="phase-title">Fine-Tuning (Unfrozen)</div>
+                            <div class="phase-title">Classification Head</div>
                             <div class="phase-desc">
-                                Upper layers of the base model are unfrozen and retrained with a lower
-                                learning rate, adapting the network's high-level representations to the
-                                specific characteristics of brain MRI imagery.
+                                Fully connected dense layers with dropout regularisation map the learned
+                                feature representations to the four output classes via a softmax activation.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phase-item">
+                        <div class="phase-num">3</div>
+                        <div class="phase-body">
+                            <div class="phase-title">Data Augmentation</div>
+                            <div class="phase-desc">
+                                On-the-fly augmentation (rotation, shifts, zoom, flips, brightness variation)
+                                is applied during training to improve generalisation across varying scan
+                                orientations and imaging conditions.
                             </div>
                         </div>
                     </div>
