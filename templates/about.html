@@ -3,77 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About – Brain Tumour Classifier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Documentation — Neuralink AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --navy:       #07111f;
+            --navy-mid:   #0d1e30;
+            --navy-light: #162840;
+            --panel:      #0f1f31;
+            --panel-alt:  #142236;
+            --border:     rgba(100, 160, 210, 0.14);
+            --border-act: rgba(100, 180, 230, 0.35);
+            --cyan:       #38b8e0;
+            --cyan-dim:   rgba(56, 184, 224, 0.08);
+            --white:      #e8f0f8;
+            --muted:      #7a9ab8;
+            --subtle:     #3d5a73;
+            --green:      #2ac77a;
+            --orange:     #e8953a;
+            --red:        #e05555;
+            --yellow:     #d4a820;
+            --font-main:  'IBM Plex Sans', sans-serif;
+            --font-mono:  'IBM Plex Mono', monospace;
+            --radius:     4px;
+            --radius-md:  8px;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0e1a;
-            color: #f1f5f9;
+            font-family: var(--font-main);
+            background: var(--navy);
+            color: var(--white);
             min-height: 100vh;
         }
-        .container { max-width: 760px; margin: 0 auto; padding: 48px 20px; }
-        a { color: #818cf8; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        h1 { font-size: 32px; margin-bottom: 24px; font-weight: 700; }
-        h2 { font-size: 20px; margin: 28px 0 12px; color: #a5b4fc; }
-        p, li { line-height: 1.8; color: #94a3b8; font-size: 15px; }
-        ul { padding-left: 24px; margin-bottom: 16px; }
-        .back { display: inline-block; margin-bottom: 32px; color: #6366f1; font-weight: 500; }
-        .card {
-            background: rgba(17, 24, 39, 0.7);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 32px;
-            backdrop-filter: blur(20px);
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(56, 184, 224, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 184, 224, 0.025) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
         }
-        table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-        th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 14px; }
-        th { color: #6366f1; font-weight: 600; }
+
+        /* ── System Bar ── */
+        .system-bar {
+            position: relative;
+            z-index: 10;
+            background: var(--navy-mid);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.04em;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 12px;
+        }
+        .brand-mark {
+            width: 22px; height: 22px;
+            border: 1.5px solid var(--cyan);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: var(--cyan); font-weight: 500;
+        }
+        .nav-links { display: flex; gap: 24px; }
+        .nav-links a {
+            color: var(--muted); text-decoration: none;
+            font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--cyan); }
+
+        /* ── Layout ── */
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 48px 32px 80px;
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: sticky;
+            top: 32px;
+        }
+        .sidebar-title {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-link {
+            font-size: 13px;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 7px 10px;
+            border-radius: var(--radius);
+            border-left: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-link:hover { color: var(--white); background: var(--cyan-dim); border-left-color: var(--border-act); }
+        .sidebar-link.active { color: var(--cyan); background: var(--cyan-dim); border-left-color: var(--cyan); }
+        .sidebar-link-dot {
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* ── Content ── */
+        .content { min-width: 0; }
+
+        .page-heading {
+            margin-bottom: 36px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-tag::before {
+            content: '';
+            width: 20px; height: 1px;
+            background: var(--cyan); display: inline-block;
+        }
+        .page-heading h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+        .page-heading p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ── Doc Sections ── */
+        .doc-section {
+            margin-bottom: 40px;
+        }
+        .doc-section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .doc-section-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        .doc-section-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── Panel ── */
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .panel-header {
+            padding: 12px 18px;
+            background: var(--panel-alt);
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        /* ── Class Table ── */
+        .class-table { width: 100%; }
+        .class-table-row {
+            display: grid;
+            grid-template-columns: 180px 1fr 110px;
+            gap: 12px;
+            padding: 14px 18px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .class-table-row:last-child { border-bottom: none; }
+        .class-table-row.header {
+            background: var(--panel-alt);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            padding: 10px 18px;
+        }
+        .class-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .class-swatch {
+            width: 10px; height: 10px;
+            border-radius: 50%; flex-shrink: 0;
+        }
+        .class-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+        .sev-badge {
+            display: inline-flex;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 2px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            justify-self: start;
+        }
+        .sev-high   { background: rgba(224,85,85,0.12); color: var(--red); }
+        .sev-medium { background: rgba(232,149,58,0.12); color: var(--orange); }
+        .sev-none   { background: rgba(42,199,122,0.12); color: var(--green); }
+
+        /* ── Spec List ── */
+        .spec-list { padding: 4px 0; }
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .spec-row:last-child { border-bottom: none; }
+        .spec-key {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--muted);
+        }
+        .spec-val { font-weight: 500; color: var(--white); }
+        .spec-val code {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            background: var(--panel-alt);
+            padding: 2px 8px;
+            border-radius: 2px;
+            color: var(--cyan);
+        }
+
+        /* ── Training Phase ── */
+        .phase-list { display: flex; flex-direction: column; gap: 1px; }
+        .phase-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 18px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+        }
+        .phase-item:last-child { border-bottom: none; }
+        .phase-num {
+            flex-shrink: 0;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border-act);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--cyan);
+            margin-top: 1px;
+        }
+        .phase-body { flex: 1; }
+        .phase-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .phase-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+        /* ── Disclaimer ── */
+        .disclaimer-box {
+            background: rgba(212, 168, 32, 0.05);
+            border: 1px solid rgba(212, 168, 32, 0.2);
+            border-left: 3px solid var(--yellow);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            font-size: 13px;
+            color: #c8a840;
+            line-height: 1.8;
+        }
+        .disclaimer-box strong { color: var(--yellow); }
+
+        /* ── Back link ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            margin-bottom: 28px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--cyan); }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .page-wrap { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .system-bar .nav-links { display: none; }
+            .class-table-row { grid-template-columns: 1fr 1fr; }
+            .class-table-row .class-desc { display: none; }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <a href="/" class="back">← Back to Classifier</a>
-    <div class="card">
-        <h1>🧠 About This Project</h1>
-        <p>
-            This web application uses a deep learning model to classify brain MRI scans into four categories.
-            It is built for educational and research purposes only.
-        </p>
 
-        <h2>Tumour Classes</h2>
-        <table>
-            <tr><th>Class</th><th>Description</th><th>Severity</th></tr>
-            <tr><td>🔴 Glioma</td><td>Tumour originating from glial cells</td><td>High</td></tr>
-            <tr><td>🟠 Meningioma</td><td>Tumour arising from the meninges</td><td>Medium</td></tr>
-            <tr><td>🟡 Pituitary</td><td>Tumour in the pituitary gland</td><td>Medium</td></tr>
-            <tr><td>🟢 No Tumour</td><td>No tumour detected in scan</td><td>None</td></tr>
-        </table>
-
-        <h2>Model Architecture</h2>
-        <ul>
-            <li><strong>Base Model:</strong> MobileNetV2 (pre-trained on ImageNet)</li>
-            <li><strong>Training Strategy:</strong> Two-phase transfer learning (frozen → fine-tuned)</li>
-            <li><strong>Input Size:</strong> 224 × 224 pixels (RGB)</li>
-            <li><strong>Data Augmentation:</strong> Rotation, shifts, zoom, flips, brightness</li>
-            <li><strong>Framework:</strong> TensorFlow / Keras</li>
-        </ul>
-
-        <h2>Tech Stack</h2>
-        <ul>
-            <li><strong>Backend:</strong> Python, Flask</li>
-            <li><strong>ML Framework:</strong> TensorFlow 2.x</li>
-            <li><strong>Frontend:</strong> Vanilla HTML/CSS/JS</li>
-        </ul>
-
-        <h2>⚠️ Disclaimer</h2>
-        <p>
-            This tool is a <strong>research/demo project</strong> and must <strong>NOT</strong> be used for actual medical diagnosis.
-            Always consult a qualified healthcare professional for medical advice.
-        </p>
+<div class="system-bar">
+    <div class="brand">
+        <div class="brand-mark">N</div>
+        Neuralink AI &nbsp;/&nbsp; v2.1.0
+    </div>
+    <span style="font-size:11px;">DOCUMENTATION</span>
+    <div class="nav-links">
+        <a href="/">CLASSIFIER</a>
+        <a href="/about" class="active">ABOUT</a>
     </div>
 </div>
+
+<div class="page-wrap">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-title">On This Page</div>
+        <nav class="sidebar-nav">
+            <a href="#overview"      class="sidebar-link active"><span class="sidebar-link-dot"></span>Overview</a>
+            <a href="#classes"       class="sidebar-link"><span class="sidebar-link-dot"></span>Tumour Classes</a>
+            <a href="#architecture"  class="sidebar-link"><span class="sidebar-link-dot"></span>Architecture</a>
+            <a href="#training"      class="sidebar-link"><span class="sidebar-link-dot"></span>Training</a>
+            <a href="#stack"         class="sidebar-link"><span class="sidebar-link-dot"></span>Tech Stack</a>
+            <a href="#disclaimer"    class="sidebar-link"><span class="sidebar-link-dot"></span>Disclaimer</a>
+        </nav>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+
+        <a href="/" class="back-link">← BACK TO CLASSIFIER</a>
+
+        <div class="page-heading" id="overview">
+            <div class="section-tag">System Documentation</div>
+            <h1>Neuralink AI — About</h1>
+            <p>
+                Neuralink AI is a deep learning system for classifying brain MRI scans into four diagnostic categories.
+                Built for educational and research demonstration purposes. Not intended for clinical use.
+            </p>
+        </div>
+
+        <!-- Tumour Classes -->
+        <div class="doc-section" id="classes">
+            <div class="doc-section-header">
+                <h2>Tumour Classes</h2>
+                <div class="doc-section-line"></div>
+            </div>
+            <div class="panel">
+                <div class="class-table">
+                    <div class="class-table-row header">
+                        <span>Class</span>
+                        <span>Description</span>
+                        <span>Severity</span>
+                    </div>
+                    <div class="class-table-row">
+                        <div class="class-item">
+                            <div class="class-swatch" style="background:var(--red)"></div>
+                            Glioma
+                        </div>
+                        <div class="class-desc">Tumour originating from glial cells of the brain or spine.</div>
+                        <span class="sev-badge sev-high">High</span>
+                    </div>
+                    <div class="class-table-row">
+                        <div class="class-item">
+                            <div class="class-swatch" style="background:var(--orange)"></div>
+                            Meningioma
+                        </div>
+                        <div class="class-desc">Tumour arising from the meninges, the protective membranes of the CNS.</div>
+                        <span class="sev-badge sev-medium">Medium</span>
+                    </div>
+                    <div class="class-table-row">
+                        <div class="class-item">
+                            <div class="class-swatch" style="background:var(--yellow)"></div>
+                            Pituitary
+                        </div>
+                        <div class="class-desc">Tumour located in or near the pituitary gland at the base of the brain.</div>
+                        <span class="sev-badge sev-medium">Medium</span>
+                    </div>
+                    <div class="class-table-row">
+                        <div class="class-item">
+                            <div class="class-swatch" style="background:var(--green)"></div>
+                            No Tumour
+                        </div>
+                        <div class="class-desc">No tumour detected in the MRI scan.</div>
+                        <span class="sev-badge sev-none">None</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="doc-section" id="architecture">
+            <div class="doc-section-header">
+                <h2>Model Architecture</h2>
+                <div class="doc-section-line"></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">NETWORK SPECIFICATIONS</div>
+                <div class="spec-list">
+                    <div class="spec-row">
+                        <span class="spec-key">base_model</span>
+                        <span class="spec-val"><code>MobileNetV2</code></span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">pretrain_weights</span>
+                        <span class="spec-val"><code>ImageNet</code></span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">input_shape</span>
+                        <span class="spec-val"><code>224 × 224 × 3 (RGB)</code></span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">output_classes</span>
+                        <span class="spec-val"><code>4</code></span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">output_activation</span>
+                        <span class="spec-val"><code>softmax</code></span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">augmentation</span>
+                        <span class="spec-val">Rotation, shifts, zoom, flips, brightness</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">framework</span>
+                        <span class="spec-val"><code>TensorFlow / Keras 2.x</code></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Strategy -->
+        <div class="doc-section" id="training">
+            <div class="doc-section-header">
+                <h2>Training Strategy</h2>
+                <div class="doc-section-line"></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">TWO-PHASE TRANSFER LEARNING</div>
+                <div class="phase-list">
+                    <div class="phase-item">
+                        <div class="phase-num">1</div>
+                        <div class="phase-body">
+                            <div class="phase-title">Feature Extraction (Frozen)</div>
+                            <div class="phase-desc">
+                                MobileNetV2 base layers are frozen. Only the classification head is trained,
+                                allowing the model to leverage ImageNet visual features on the MRI domain.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phase-item">
+                        <div class="phase-num">2</div>
+                        <div class="phase-body">
+                            <div class="phase-title">Fine-Tuning (Unfrozen)</div>
+                            <div class="phase-desc">
+                                Upper layers of the base model are unfrozen and retrained with a lower
+                                learning rate, adapting the network's high-level representations to the
+                                specific characteristics of brain MRI imagery.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="doc-section" id="stack">
+            <div class="doc-section-header">
+                <h2>Tech Stack</h2>
+                <div class="doc-section-line"></div>
+            </div>
+            <div class="panel">
+                <div class="spec-list">
+                    <div class="spec-row">
+                        <span class="spec-key">backend</span>
+                        <span class="spec-val"><code>Python</code> &nbsp;<code>Flask</code></span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">ml_framework</span>
+                        <span class="spec-val"><code>TensorFlow 2.x</code> &nbsp;<code>Keras</code></span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">frontend</span>
+                        <span class="spec-val">Vanilla HTML / CSS / JS</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-key">image_processing</span>
+                        <span class="spec-val"><code>Pillow</code> &nbsp;<code>NumPy</code></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="doc-section" id="disclaimer">
+            <div class="doc-section-header">
+                <h2>Disclaimer</h2>
+                <div class="doc-section-line"></div>
+            </div>
+            <div class="disclaimer-box">
+                <strong>⚠ Research and Educational Use Only</strong><br>
+                This system is a <strong>demonstration and research tool</strong>. It must <strong>NOT</strong> be used
+                for clinical diagnosis, medical decision-making, or any patient care application.
+                Model outputs are probabilistic estimates and may be inaccurate.
+                Always consult a qualified and licensed healthcare professional for any medical concerns.
+                The authors assume no liability for misuse of this tool.
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
 </body>
 </html>
